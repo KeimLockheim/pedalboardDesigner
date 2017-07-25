@@ -1,0 +1,12 @@
+.flowZone {
+  height: 89vh;
+
+}
+
+.textZone {
+  height: 88vh;
+}
+
+.textZone textarea {
+  border:none;
+}

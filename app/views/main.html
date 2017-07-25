@@ -1,0 +1,72 @@
+  <div class="pedalboard"
+        ng-controller="PedalboardCtrl"
+        mouse-capture
+        ng-keydown="keyDown($event)"
+        ng-keyup="keyUp($event)"
+        >
+
+        <nav class="brown">
+          <div class="nav-wrapper">
+            <ul class="left">
+              <li><a href="" class=" btn brown lighten-1" ng-click="addNewNode(1)"
+              title="Add a new pedal on the pedalboard"><i class="material-icons left">add</i>Add pedal</a></li>
+              
+              <li><a href="" class=" btn brown lighten-1" ng-click="addNewInputConnector()"
+              ng-disabled="chartViewModel.getSelectedNodes().length == 0"
+              title="Add a new input to the selected pedal"><i class="material-icons left">vertical_align_bottom</i>Add input</a></li>
+              
+              <li><a href="" class=" btn brown lighten-1" ng-click="addNewOutputConnector()"
+                ng-disabled="chartViewModel.getSelectedNodes().length == 0"
+                title="Add a new output to the selected pedal"><i class="material-icons left">vertical_align_top</i>Add output</a></li>
+              
+              <li><a href="" class=" btn brown lighten-1" ng-click="deleteSelected()"
+                ng-disabled="chartViewModel.getSelectedNodes().length == 0 && chartViewModel.getSelectedConnections().length == 0"
+                title="Delete selected pedals and connections"><i class="material-icons left">delete</i>Delete</a></li>
+            </ul>
+
+            <ul class="right">
+              <li><a class="waves-effect waves-light btn brown lighten-1 modal-trigger" ng-click="toggleCode()"
+                title="Show pedalboard structure code"><i class="material-icons">code</i></a></li>
+            </ul>
+          </div>
+        </nav>
+
+
+
+
+
+          <div class="row">
+            <div class="col s12 flowZone">
+            <!--
+            This custom element defines the flowchart.
+            -->
+              <flow-chart class="col s12"
+                style="margin-left: 0px ; height: 100%;"
+                  chart="chartViewModel"
+                  >
+              </flow-chart>
+            </div>
+          </div>
+
+
+            <div id='codeZone' class="row">
+              <div class="col s12 ">
+                  <textarea class="col s12 textZone card brown lighten-5"
+                  chart-json-edit
+                  view-model="chartViewModel"
+                  >
+                </textarea>
+              </div>
+              <div class="col s12 center">
+                <a class="waves-effect waves-light btn brown lighten-1 modal-trigger" ng-click="toggleCode()"
+                title="Show pedalboard structure code"><i class="material-icons left">code</i> Hide code</a>
+              </div>
+                
+            </div>
+
+            <!-- Dropdown Structure -->
+        <ul id="dropdownPedals" class="dropdown-content">
+          <!-- <li><a href="#!" ">0</a></li>
+          <li><a href="#!" ">1</a></li> -->
+        </ul>
+    </div>
