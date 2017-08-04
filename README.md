@@ -8,10 +8,4 @@ version 0.16.0.
 Résoudre les dépendances avec les commandes `npm install` et `bower install`.
 Install grunt package `npm install grunt-cli` si pas déjà installé.
 
-## Build & development
-
-Run `grunt` for building and `grunt serve` for preview.
-
-## Testing
-
-Running `grunt test` will run the unit tests with karma.
+Pour lancer le serveur, utilisez la commande `grunt serve`
