@@ -2,18 +2,103 @@ angular.module('pedalboardDesignerApp').factory('PedalboardService', function() 
 
   var service = {};
 
+  service.deepCopyPedal = function (pedalObject){
+    var copiedPedal = {};
+    copiedPedal.name = pedalObject.name;
+
+    copiedPedal.potentiometers =[];
+
+    pedalObject.pots.forEach(function (pot) {
+        copiedPedal.potentiometers.push({name:pot.name, value:pot.value});
+
+        
+        
+    })
+    copiedPedal.switch = false;
+
+    return copiedPedal;
+  }
+
+  service.detectMIDIDevice = function (scope, devices){
+    scope.devices = [];
+
+        devices
+            .connect()
+            .then(function(access) {
+                if('function' === typeof access.inputs) {
+                    // deprecated
+                    scope.devices = access.inputs();
+                    console.error('Update your Chrome version!');
+                } else {
+                    if(access.inputs && access.inputs.size > 0) {
+                        var inputs = access.inputs.values(),
+                            input = null;
+
+                        // iterate through the devices
+                        for (input = inputs.next(); input && !input.done; input = inputs.next()) {
+                            scope.devices.push(input.value);
+                        }
+                    } else {
+                        console.error('No devices detected!');
+                    }
+
+                }
+            })
+            .catch(function(e) {
+                console.error(e);
+            });
+  }
 
 
   return service;
 });
 
-angular.module('pedalboardDesignerApp').controller('PedalboardCtrl', function(PedalboardService, $scope) {
+angular.module('pedalboardDesignerApp').controller('PedalboardCtrl',['$scope','Devices' ,'PedalboardService' ,function( $scope, devices, PedalboardService) {
+
+  console.log(devices);
+  $scope.switchTouched = false;
+
+  
+  //
+  //Detect midi devices
+  //
+  $scope.devices = [];
+
+        devices
+            .connect()
+            .then(function(access) {
+                if('function' === typeof access.inputs) {
+                    // deprecated
+                    $scope.devices = access.inputs();
+                    console.error('Update your Chrome version!');
+                } else {
+                    if(access.inputs && access.inputs.size > 0) {
+                        var inputs = access.inputs.values(),
+                            input = null;
+
+                        // iterate through the devices
+                        for (input = inputs.next(); input && !input.done; input = inputs.next()) {
+                            $scope.devices.push(input.value);
+                        }
+                    } else {
+                        console.error('No devices detected!');
+                    }
+
+                }
+            })
+            .catch(function(e) {
+                console.error(e);
+            });
+
+
+
+
+  var potsNewValues = [];
 
   //
   // JQuery lines
   //
   $('#codeZone').toggle();
-  $(".dropdown-button").dropdown();
 
 
   //
@@ -22,29 +107,114 @@ angular.module('pedalboardDesignerApp').controller('PedalboardCtrl', function(Pe
   var pedals = {
     pedals:[
       {
-        name: "distortion",
+        name: "Distortion",
         pots: [
           {
             name: "volume",
-            value: "0.5",
+            value: "50",
           },
           {
             name: "tone",
-            value: "0.5",
+            value: "50",
           },
           {
             name: "drive",
-            value: "0.5",
+            value: "50",
           }
         ],
         switch:{
           enabled: false
         }
+      },
+      {
+        name: "Overdrive",
+        pots: [
+          {
+            name: "volume",
+            value: "50",
+          },
+          {
+            name: "tone",
+            value: "50",
+          },
+          {
+            name: "drive",
+            value: "50",
+          }
+        ],
+        switch:{
+          enabled: false
+        }
+      },
+      {
+        name: "Chorus",
+        pots: [
+          {
+            name: "speed",
+            value: "50",
+          },
+          {
+            name: "depth",
+            value: "50",
+          },
+          {
+            name: "volume",
+            value: "50",
+          }
+        ],
+        switch:{
+          enabled: false
+        }
+      },
+      {
+        name: "8band E.Q",
+        pots: [
+          {
+            name: "100Hz",
+            value: "50",
+          },
+          {
+            name: "170Hz",
+            value: "50",
+          },
+          {
+            name: "280Hz",
+            value: "50",
+          },
+          {
+            name: "500Hz",
+            value: "50",
+          },
+          {
+            name: "800Hz",
+            value: "50",
+          },
+          {
+            name: "1.4kHz",
+            value: "50",
+          },
+          {
+            name: "2.3kHz",
+            value: "50",
+          },
+          {
+            name: "5.0kHz",
+            value: "50",
+          },
+          {
+            name: "Gain",
+            value: "50",
+          },
+        ],
+        switch:{
+          enabled: false
+        }
       }
+
     ]
   };
 
-  var pedalboardCtrl = this;
+  $scope.pedals = pedals;
 
   //
   // Code for the delete key.
@@ -80,100 +250,77 @@ angular.module('pedalboardDesignerApp').controller('PedalboardCtrl', function(Pe
   // Setup the data-model for the chart.
   //
 
-  var chartDataModel = {};
+  var chartDataModel = {
+    "nodes": [],
+    "connections": []
+  };
 
-  // var chartDataModel = {
+  //
+  // Ouvre le modal de l'effet sélectionné et affiche tous ses paramètres
+  //
+  $scope.openModal = function(effect) {
 
-  //   nodes: [
-  //     {
-  //       name: "Example Node 1",
-  //       id: 0,
-  //       x: 0,
-  //       y: 0,
-  //       width: 350,
-  //       inputConnectors: [
-  //         {
-  //           name: "A",
-  //         },
-  //         {
-  //           name: "B",
-  //         },
-  //         {
-  //           name: "C",
-  //         },
-  //       ],
-  //       outputConnectors: [
-  //         {
-  //           name: "A",
-  //         },
-  //         {
-  //           name: "B",
-  //         },
-  //         {
-  //           name: "C",
-  //         },
-  //       ],
-  //     },
+    $scope.modalEffect = effect.data;
 
-  //     {
-  //       name: "Example Node 2",
-  //       id: 1,
-  //       x: 400,
-  //       y: 200,
-  //       inputConnectors: [
-  //         {
-  //           name: "A",
-  //         },
-  //         {
-  //           name: "B",
-  //         },
-  //         {
-  //           name: "C",
-  //         },
-  //       ],
-  //       outputConnectors: [
-  //         {
-  //           name: "A",
-  //         },
-  //         {
-  //           name: "B",
-  //         },
-  //         {
-  //           name: "C",
-  //         },
-  //       ],
-  //     },
+    $('#pedalName').text(effect.data.name);
+    $('.box').attr('data-id',effect.data.id)
+    $.each(effect.data.pots,function( key, val) {
 
-  //   ],
+       $('.pots').append("<div class='pot col s4'><input type='text' value='"+val.value+"' class='"+effect.data.id+"_"+val.name+"' data-min='0' data-max='100' data-step='.1' data-fgColor='#a1887f' data-angleOffset='-125' data-angleArc='250' data-displayInput=false data-height='75' data-width='75'> <div>"+val.name+"</div></div>");
+      $("."+effect.data.id+"_"+val.name).knob({
+        'release' : function (v) {
+          console.log(v);
+          console.log(potsNewValues);
+          $("."+effect.data.id+"_"+val.name).attr('value', v);
+        }
+      });
+      $("."+effect.data.id+"_"+val.name).attr('value', val.value);
 
-  //   connections: [
-  //     {
-  //       name:'Connection 1',
-  //       source: {
-  //         nodeID: 0,
-  //         connectorIndex: 1,
-  //       },
+    });
 
-  //       dest: {
-  //         nodeID: 1,
-  //         connectorIndex: 2,
-  //       },
-  //     },
-  //     {
-  //       name:'Connection 2',
-  //       source: {
-  //         nodeID: 0,
-  //         connectorIndex: 0,
-  //       },
 
-  //       dest: {
-  //         nodeID: 1,
-  //         connectorIndex: 0,
-  //       },
-  //     },
+    
 
-  //   ]
-  // };
+    if(effect.data.switch.enabled == false){
+      
+      $('.switchPedal').prop('checked',false);
+    }else if(effect.data.switch.enabled == true){
+
+      $('.switchPedal').prop('checked',true);
+
+    }
+    
+  };
+
+  $scope.saveModal = function(event) {
+      
+
+      //Récupère les valeurs des potentiomètres
+      var nbPot = event.target.parentElement.previousElementSibling.children["0"].children.length;
+      var pots = [];
+
+      for (var i = 0; i < nbPot; ++i) {
+        index = event.target.parentElement.previousElementSibling.children["0"].children[i].children["0"].lastChild.className;
+        value = event.target.parentElement.previousElementSibling.children["0"].children[i].children["0"].lastChild.attributes[1].value;
+        pots.push({index: index, value:value});
+      }
+
+      $scope.editPotentiometer(pots);
+
+
+
+      if($scope.switchTouched){
+         $scope.toggleSwitch();
+      }
+      
+      $scope.switchTouched = false;
+      $scope.closeModal();
+  };
+
+  $scope.closeModal = function() {
+      $('.pots').text("");
+  };
+
 
   //
   // Event handler for key-down on the flowchart.
@@ -220,55 +367,47 @@ angular.module('pedalboardDesignerApp').controller('PedalboardCtrl', function(Pe
     }
   };
 
+
+  //
+  // Enable/disable switch
+  //
+  $scope.toggleSwitch = function (idModule) {
+    $scope.chartViewModel.toggleSwitch(idModule);
+  }
+
+  //
+  // Edit potentiometer value
+  //
+  $scope.editPotentiometer = function (values) {
+    $scope.chartViewModel.editPotentiometer(values);
+ 
+  }
+
   //
   // Add a new node to the chart.
   //
   $scope.addNewNode = function (pedalId) {
 
-    console.log("NewNode");
-
-    console.log(pedals.pedals[0]);
-    //var nodeName = prompt("Enter a pedal name:", "New pedal"); OLD
-
-    // if (!nodeName) {
-    //   return;
-    // }
-
-    pedalName = pedals.pedals[0].name;
-    pedalPots = pedals.pedals[0].pots;
-    pedalSwitch = pedals.pedals[0].switch;
-
+    var pedal = PedalboardService.deepCopyPedal(pedals.pedals[pedalId]);
 
     //
     // Template for a new node.
     //
     var newNodeDataModel = {
-      name: pedalName,
+      name: pedal.name,
       id: nextNodeID++,
       x: 0,
       y: 0,
-      pots: pedalPots,
-      switch: pedalSwitch, 
+      pots: pedal.potentiometers,
+      switch: {enabled:pedal.switch}, 
       inputConnectors: [
         {
           name: "X"
-        },
-        {
-          name: "Y"
-        },
-        {
-          name: "Z"
         }
       ],
       outputConnectors: [ 
         {
           name: "1"
-        },
-        {
-          name: "2"
-        },
-        {
-          name: "3"
         }
       ],
     };
@@ -333,9 +472,7 @@ angular.module('pedalboardDesignerApp').controller('PedalboardCtrl', function(Pe
   //
   $scope.toggleCode = function () {
     $('#codeZone').toggle();
-    //$('#codeZone').removeClass('hidden');
     window.scrollTo(0,document.body.scrollHeight);
   };
 
-
-});
+}]);

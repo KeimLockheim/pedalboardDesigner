@@ -4,27 +4,7 @@
   ng-mousedown="mouseDown($event)"
   ng-mousemove="mouseMove($event)"
   >
-  <<!-- defs>
-    <linearGradient 
-      spreadMethod="pad" 
-      y2="0" 
-      x2="0" 
-      y1="1" 
-      x1="0" 
-      id="nodeBackgroundGradient"
-      >
-      <stop 
-        offset="0" 
-        stop-opacity="0.99609" 
-        stop-color="#56aaff"
-        />
-        <stop 
-        offset="0.63934" 
-        stop-opacity="0.99219" 
-        stop-color="#d0d0e5"
-        />
-    </linearGradient>
-  </defs> -->
+
   <g
     ng-repeat="node in chart.nodes"
     ng-mousedown="nodeMouseDown($event, node)"
@@ -39,6 +19,7 @@
       ng-attr-width="{{node.width()}}" 
       ng-attr-height="{{node.height()}}" 
       fill="rgba(255,255,255,0)"
+      class="card"
       >
 
     </rect>
@@ -48,29 +29,26 @@
       y="25"
       text-anchor="middle"
       alignment-baseline="middle"
+      style="fill: none; stroke: #000000;"
       >
-
+      {{node.name()}}
 
      
     </text>
-     <foreignObject>
+
+     <foreignObject x="{{node.width()/2 - 65}}" y="50">
           <body xmlns="http://www.w3.org/1999/xhtml"  >
-            <div id="0" class="box" ng-controller="PedalboardCtrl">
-              <div class="pots">
-                <div class="pot"></div>
-              </div>
-              <div class='name'>
-              {{pots}}
-              </div>
-              <div class="led">
-                
-              </div>
-              <div class="switch">
-                
-              </div>
+            <div id="node.id()" ng-controller="PedalboardCtrl" class="box">
+            <!-- Button trigger modal -->
+              <button type="button" ng-click="openModal(node)" class="btn brown" data-toggle="modal" data-target="#pedalModal">
+                Settings
+            </button>
             </div>
+
+
           </body>
         </foreignObject>
+     
 
     <g
       ng-repeat="connector in node.inputConnectors"

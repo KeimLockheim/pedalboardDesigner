@@ -41,6 +41,7 @@
     "test": "karma start test/karma.conf.js"
   },
   "dependencies": {
+    "angular-ui": "^1.0.0",
     "materialize-css": "^0.100.1"
   }
 }

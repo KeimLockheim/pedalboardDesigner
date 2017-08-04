@@ -21,16 +21,16 @@ Styles for nodes and connectors.
 
 .node-rect {
 	stroke: black;
-	stroke-width: 2;
+	stroke-width: 0.5;
 }
 
 .mouseover-node-rect {
 	stroke: black;
-	stroke-width: 4;
+	stroke-width: 3;
 }
 
 .selected-node-rect {
-	stroke: red;
+	stroke: #6d4c41;
 	stroke-width: 3;
 }
 
@@ -66,7 +66,7 @@ Style for connections.
 }	
 
 .selected-connection-line {
-	stroke: red;
+	stroke: #6d4c41;
 	stroke-width: 4;
 	fill: transparent;
 }	
@@ -76,7 +76,7 @@ Style for connections.
 }
 
 .selected-connection-endpoint {
-	fill: red;
+	fill: #6d4c41;
 }	
 
 .mouseover-connection-endpoint {
@@ -88,7 +88,7 @@ Style for connections.
 }
 
 .selected-connection-name{
-	fill: red;
+	fill: #6d4c41;
 }
 
 .mouseover-connection-name{
@@ -114,7 +114,7 @@ Style for the connection being dragged out.
 
 /*
 The element (in this case the SVG element) that contains the draggable elements.
-*/
+*/f
 
 .draggable-container {
 	margin-top: 10px;

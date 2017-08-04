@@ -122,6 +122,13 @@ var flowchart = {
 		};
 
 		//
+		// Pots of the node.
+		//
+		this.pots = function () {
+			return this.data.pots || "";
+		};
+
+		//
 		// X coordinate of the node.
 		//
 		this.x = function () { 
@@ -565,6 +572,64 @@ var flowchart = {
 			//
 			this.nodes.push(new flowchart.NodeViewModel(nodeDataModel));		
 		}
+
+		//
+		// Edit potentiometer value
+		//
+		this.editPotentiometer = function (pots) {
+			console.log(pots);
+
+			pots.forEach(function(pot){
+
+			})
+
+
+
+			this.nodes.forEach(function(element){
+
+				console.log(element);
+				if(element.selected){
+					
+					element.data.pots.forEach(function(pot,key){
+						
+						if(pots[key].index == element.data.id+"_"+pot.name){
+							console.log("====newNodeViewModels=====");
+							console.log(pots[key].index);
+							console.log("=====old======");
+							console.log(element.data.id+"_"+pot.name);
+							console.log("=====exp======");
+							console.log();
+							pot.value = pots[key];
+						}
+						
+
+					})
+
+				}
+			})
+		}
+
+
+		//
+		// Enable/disable switch in data model
+		//
+		this.toggleSwitch = function (idModule){
+
+
+			this.nodes.forEach(function(element,key){
+
+				if(element.selected()){
+					console.log(element.selected());
+					if(!element.data.switch.enabled){
+						element.data.switch.enabled = true;
+					}
+					else if(element.data.switch.enabled){
+						element.data.switch.enabled = false;
+					}
+				}
+			})
+		};
+
 
 		//
 		// Select all nodes and connections in the chart.

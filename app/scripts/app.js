@@ -16,7 +16,8 @@ angular
     'ngRoute',
     'ngSanitize',
     'ngTouch',
-    'flowChart'
+    'flowChart',
+    'WebMIDI'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -33,4 +34,6 @@ angular
       .otherwise({
         redirectTo: '/'
       });
+
   });
+
